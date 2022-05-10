@@ -1,16 +1,22 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.Serializable;
 
-public abstract class GameObject {
+public abstract class GameObject implements Serializable {
 
-    protected int x, y;
+    protected int x, y, sheetX, sheetY, sheetSizeX, sheetSizeY;
     protected float speedX = 0, speedY = 0;     //speed of object
     protected ID id;
+    protected Sheet sh;
+    private transient BufferedImage sprite = null;
 
 
-    public GameObject(int x, int y, ID id) {
+    public GameObject(int x, int y, ID id, Sheet sh) {
         this.x = x;
         this.y = y;
         this.id = id;
+        this.sh = sh;
     }
 
     public abstract void tick();
@@ -19,7 +25,12 @@ public abstract class GameObject {
      * Render object's color and it's size.
      * @param g
      */
-    public abstract void render(Graphics g);
+    public void render(Graphics g){
+        if(sprite == null){ //1. render nové hry nebo po načtení
+            sprite = sh.grab(sheetX, sheetY, sheetSizeX, sheetSizeY);
+        }
+        g.drawImage(sprite, x, y, null);
+    };
 
     /**
      * Returns object's size for calculating occurrence of collision.
