@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
-public class Window {
+
+public class Window  {
 
     /**
      * Create a window of the game.
@@ -26,17 +28,31 @@ public class Window {
         JButton btnLoadGame = new JButton("Load game");
         btnLoadGame.setBounds(390, 300, 200, 64);
 
+        JButton btnPlayAgain = new JButton("Play again");
+        btnLoadGame.setBounds(390, 300, 200, 64);
+
+
+
         ActionListener al = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                game.gameState = Game.STATE.Game;
 
-                if(e.getSource() == btnLoadGame) {
+                if (e.getSource() == btnLoadGame) {
                     //load game//////////////
+                    game.gameState = Game.STATE.Load;
+                    btnNewGame.setVisible(false);
+                    btnLoadGame.setVisible(false);
                 }
-                btnNewGame.setVisible(false);
-                btnLoadGame.setVisible(false);
+
+                if (e.getSource() == btnNewGame) {
+                    game.gameState = Game.STATE.Game;
+                    btnNewGame.setVisible(false);
+                    btnLoadGame.setVisible(false);
+                }
+
             }
+
+
         };
 
         btnNewGame.addActionListener(al);
@@ -45,6 +61,7 @@ public class Window {
 
         frame.add(btnNewGame);
         frame.add(btnLoadGame);
+        frame.add(btnPlayAgain);
 
         frame.add(game);
 
