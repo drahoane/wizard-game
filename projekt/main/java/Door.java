@@ -7,20 +7,14 @@ public class Door extends GameObject {
 
     private BufferedImage chestImg;
 
-    public Door(int x, int y, ID id, Sheet sh) {
-        super(x, y, id, sh);
+    public Door(int x, int y, ID id) {
+        super(x, y, id);
 
-        chestImg = sh.grab(7, 2, 32, 32);
     }
 
     @Override
     public void tick() {
 
-    }
-
-    @Override
-    public void render(Graphics g) {
-        g.drawImage(chestImg, x, y, null);
     }
 
     @Override
