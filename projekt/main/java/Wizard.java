@@ -1,12 +1,42 @@
 import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class Wizard extends GameObject {
+    private static final Logger LOGGER = Logger.getLogger(Wizard.class.getName());
+
+    transient FileHandler fileHandler = null;
 
     Handler handler;
+    Game game;
 
-    public Wizard(int x, int y, ID id, Handler handler) {
-        super(x, y, id);
+    //transient private BufferedImage wizImg = null;
+
+    int hp = 100;
+    public int mana = 100;
+
+
+    public ArrayList<String> inventory = new ArrayList<>();
+    int chestsLeft = 9;
+
+    public Wizard(int x, int y, ID id, Handler handler, Game game, Sheet sh) {
+        super(x, y, id, sh);
         this.handler = handler;
+        this.game = game;
+        sheetX = 1; sheetY = 1; sheetSizeX = 32; sheetSizeY = 48;
+
+
+        try {
+            fileHandler = new FileHandler("status.log");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LOGGER.addHandler(fileHandler);
+
     }
 
     /**
@@ -32,6 +62,7 @@ public class Wizard extends GameObject {
 
         if(handler.isLeft()) speedX = -5;
         else if(!handler.isRight()) speedX = 0;
+
     }
 
     /**
@@ -39,25 +70,66 @@ public class Wizard extends GameObject {
      * If game object is a 'block', check for collision between player and this block.
      * If collision appears, change player's speed.
      */
-    private void collision() {
-        for(int i = 0; i < handler.object.size(); i++) {
-            GameObject tempObject = handler.object.get(i);
+    void collision() {
 
-            if(tempObject.getId() == ID.Block) {
-                if(getBounds().intersects(tempObject.getBounds())) {
+        for(int i = 0; i < handler.objects.size(); i++) {
+            GameObject tempObject = handler.objects.get(i);
+
+            if (tempObject.getId() == ID.Block) {
+                if (getBounds().intersects(tempObject.getBounds())) {
                     x += speedX * -1;
                     y += speedY * -1;
 
                 }
             }
+
+            if (tempObject.getId() == ID.Chest) {
+                if (getBounds().intersects(tempObject.getBounds())) {
+                    if (chestsLeft == 1) {
+                        inventory.add("Door key");
+                        LOGGER.log(Level.FINER,"Door key has been added to the inventory");
+                    }
+                    mana += 10;
+                    handler.removeObject(tempObject);
+                    chestsLeft -= 1;
+                    /*
+                    System.out.println("chestka sebrana");
+                    if (chestsLeft == 0) {
+                        System.out.println("tahle byla posledni");
+                    } else {
+                        System.out.println("zbyva: " + chestsLeft);
+                    }
+                     */
+                }
+            }
+
+            if (tempObject.getId() == ID.Enemy) {
+                if (getBounds().intersects(tempObject.getBounds())) {
+                    hp -= 1;
+
+                    if (hp == 0) {
+                        handler.removeObject(this);
+
+                    }
+                }
+            }
+
+                /*if (game.inventory.contains("Door key")){
+                    System.out.println("je tam");
+                } else {
+                    System.out.println("neni tu");
+                }*/
+
         }
     }
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.GREEN);
-        g.fillRect(x, y, 32, 48);
+        super.render(g);
+        //wizImg = sh.grab(1, 1, 32, 48);
+        //g.drawImage(wizImg, x, y, null);
     }
+
 
     @Override
     public Rectangle getBounds() {
