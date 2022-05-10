@@ -1,23 +1,24 @@
 import java.awt.*;
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class Handler {
+public class Handler implements Serializable {
 
-    LinkedList<GameObject> object = new LinkedList<GameObject>();
+    LinkedList<GameObject> objects = new LinkedList<>();
 
     private boolean up = false, down = false, right = false, left = false;
 
     public void tick() {
-        for (int i = 0; i < object.size(); i++) {
-            GameObject tempObject = object.get(i);
+        for (int i = 0; i < objects.size(); i++) {
+            GameObject tempObject = objects.get(i);
 
             tempObject.tick();
         }
     }
 
     public void render(Graphics g) {
-        for (int i = 0; i < object.size(); i++) {
-            GameObject tempObject = object.get(i);
+        for (int i = 0; i < objects.size(); i++) {
+            GameObject tempObject = objects.get(i);
 
             tempObject.render(g);
 
@@ -25,11 +26,11 @@ public class Handler {
     }
 
     public void addObject(GameObject tempObject) {
-        object.add(tempObject);
+        objects.add(tempObject);
     }
 
     public void removeObject(GameObject tempObject) {
-        object.remove(tempObject);
+        objects.remove(tempObject);
     }
 
     public boolean isUp() {
@@ -63,4 +64,7 @@ public class Handler {
     public void setLeft(boolean left) {
         this.left = left;
     }
+
+
+
 }
