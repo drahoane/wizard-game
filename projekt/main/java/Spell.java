@@ -1,10 +1,14 @@
 import java.awt.*;
+import java.util.logging.Logger;
 
-public class Spell extends GameObject{
-    private Handler handler;
+public class Spell extends GameObject {
+    private static final Logger LOGGER = Logger.getLogger(Spell.class.getName() );
 
-    public Spell(int x, int y, ID id, Handler handler, int mx, int my) {
-        super(x, y, id);
+
+    private final Handler handler;
+
+    public Spell(int x, int y, ID id, Handler handler, Sheet sh, int mx, int my) {
+        super(x, y, id, sh);
         this.handler = handler;
 
         speedX = (mx - x) / 10;
@@ -20,8 +24,12 @@ public class Spell extends GameObject{
         x += speedX;
         y += speedY;
 
-        for(int i = 0; i < handler.object.size(); i++) {
-            GameObject tempObject = handler.object.get(i);
+        if(speedX == 0 || speedY == 0) {
+            handler.removeObject(this);
+        }
+
+        for(int i = 0; i < handler.objects.size(); i++) {
+            GameObject tempObject = handler.objects.get(i);
 
             if (tempObject.getId() == ID.Block) {
                 if (getBounds().intersects(tempObject.getBounds())) {
@@ -33,7 +41,7 @@ public class Spell extends GameObject{
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.MAGENTA);
+        g.setColor(Color.BLUE);
         g.fillRect(x, y, 8, 8);
     }
 
