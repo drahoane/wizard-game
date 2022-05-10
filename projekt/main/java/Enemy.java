@@ -1,17 +1,23 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class Enemy extends GameObject{
+    private static final Logger LOGGER = Logger.getLogger(Enemy.class.getName() );
 
-    private Handler handler;
+    Handler handler;
     Random rnd = new Random();
     int choose = 0;
     int hp = 100;
 
+
     public Enemy(int x, int y, ID id, Handler handler) {
         super(x, y, id);
         this.handler = handler;
+
     }
+
 
     @Override
     public void tick() {
@@ -53,17 +59,6 @@ public class Enemy extends GameObject{
 
     }
 
-
-    @Override
-    public void render(Graphics g) {
-        g.setColor(Color.red);
-        g.fillRect(x, y, 32, 32);
-
-        Graphics2D g2d = (Graphics2D) g;
-
-        g.setColor(Color.red);
-        g2d.draw(getBoundsBig());
-    }
 
     @Override
     public Rectangle getBounds() {
