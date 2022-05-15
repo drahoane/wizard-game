@@ -4,5 +4,5 @@ public enum ID {        //5 different game objects
     Chest(),
     Spell(),
     Enemy(),
-    Door();
+    Door()
 }

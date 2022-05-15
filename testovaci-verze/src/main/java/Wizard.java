@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
@@ -10,28 +9,23 @@ import java.util.logging.Logger;
 public class Wizard extends GameObject {
     private static final Logger LOGGER = Logger.getLogger(Wizard.class.getName());
 
-    FileHandler fileHandler = null;
-
     Handler handler;
     Game game;
 
-    int hp = 100;
-    public ArrayList<String> inventory = new ArrayList<>();
+    //transient private BufferedImage wizImg = null;
 
+    int hp = 100;
+    public int mana = 100;
+
+
+    public ArrayList<String> inventory = new ArrayList<>();
     int chestsLeft = 9;
 
     public Wizard(int x, int y, ID id, Handler handler, Game game) {
         super(x, y, id);
         this.handler = handler;
         this.game = game;
-
-
-        try {
-            fileHandler = new FileHandler("status.log");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        LOGGER.addHandler(fileHandler);
+        sheetX = 1; sheetY = 1; sheetSizeX = 32; sheetSizeY = 48;
 
     }
 
@@ -58,6 +52,7 @@ public class Wizard extends GameObject {
 
         if(handler.isLeft()) speedX = -5;
         else if(!handler.isRight()) speedX = 0;
+
     }
 
     /**
@@ -67,8 +62,8 @@ public class Wizard extends GameObject {
      */
     void collision() {
 
-        for(int i = 0; i < handler.object.size(); i++) {
-            GameObject tempObject = handler.object.get(i);
+        for(int i = 0; i < handler.objects.size(); i++) {
+            GameObject tempObject = handler.objects.get(i);
 
             if (tempObject.getId() == ID.Block) {
                 if (getBounds().intersects(tempObject.getBounds())) {
@@ -82,9 +77,9 @@ public class Wizard extends GameObject {
                 if (getBounds().intersects(tempObject.getBounds())) {
                     if (chestsLeft == 1) {
                         inventory.add("Door key");
-                        LOGGER.log(Level.FINER,"Door key has been added to the inventory");
+                        LOGGER.log(Level.INFO,"Door key has been added to the inventory");
                     }
-                    game.mana += 10;
+                    mana += 10;
                     handler.removeObject(tempObject);
                     chestsLeft -= 1;
                     /*
@@ -109,19 +104,15 @@ public class Wizard extends GameObject {
                 }
             }
 
-            if (tempObject.getId() == ID.Door) {
-                if (getBounds().intersects(tempObject.getBounds()) && inventory.contains("Door key")) {
-                    //announce the player as a winner
-                    game.gameState = Game.STATE.Victory;
-                }
                 /*if (game.inventory.contains("Door key")){
                     System.out.println("je tam");
                 } else {
                     System.out.println("neni tu");
                 }*/
-            }
+
         }
     }
+
 
 
     @Override
