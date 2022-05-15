@@ -4,13 +4,13 @@ import java.util.LinkedList;
 
 public class Handler implements Serializable {
 
-    LinkedList<GameObject> object = new LinkedList<>();
+    LinkedList<GameObject> objects = new LinkedList<>();
 
     private boolean up = false, down = false, right = false, left = false;
 
     public void tick() {
-        for (int i = 0; i < object.size(); i++) {
-            GameObject tempObject = object.get(i);
+        for (int i = 0; i < objects.size(); i++) {
+            GameObject tempObject = objects.get(i);
 
             tempObject.tick();
         }
@@ -18,11 +18,11 @@ public class Handler implements Serializable {
 
 
     public void addObject(GameObject tempObject) {
-        object.add(tempObject);
+        objects.add(tempObject);
     }
 
     public void removeObject(GameObject tempObject) {
-        object.remove(tempObject);
+        objects.remove(tempObject);
     }
 
     public boolean isUp() {

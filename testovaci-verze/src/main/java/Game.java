@@ -2,26 +2,24 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 public class Game extends Canvas implements Serializable, Runnable {
 
-    Logger LOGGER = Logger.getLogger(Game.class.getName() );
+    protected static final Logger LOGGER = Logger.getLogger(Game.class.getName() );
 
     private static final long serialVersionUID = 1L;
 
     private boolean isRunning = false;
-    private Thread thread;
-    public Handler handler;
-    Camera camera;
-
-    private BufferedImage level = null;
+    transient private Thread thread;
+    protected Handler handler;
+    protected transient final Camera camera;
 
     public Wizard ply;
 
-    public int mana = 100;  //here cause of render method
+
+    transient private final BufferedImage level;
+
 
     public enum STATE {
         Menu,
@@ -32,9 +30,8 @@ public class Game extends Canvas implements Serializable, Runnable {
         Load
     }
 
-    ;
 
-    public STATE gameState = STATE.Game;
+    public STATE gameState = STATE.Menu;
 
     /**
      * Create a window of the game including the game handler.
@@ -43,7 +40,7 @@ public class Game extends Canvas implements Serializable, Runnable {
      * Load the image of a level from resources.
      */
     public Game() {
-        new Window(1000, 563, "Wizard Game", this);
+        new Window(1000, 563, "Enchanted", this);
         start();
 
         handler = new Handler();
@@ -58,9 +55,7 @@ public class Game extends Canvas implements Serializable, Runnable {
 
         this.addMouseListener(new MouseInput(handler, camera, this));     //listening for mouse input
 
-
         loadLevel(level);
-
     }
 
     /**
@@ -106,6 +101,7 @@ public class Game extends Canvas implements Serializable, Runnable {
                 tick();
                 delta--;
             }
+            render();
             frames++;
 
             if (System.currentTimeMillis() - timer > 1000) {
@@ -124,15 +120,15 @@ public class Game extends Canvas implements Serializable, Runnable {
         handler.tick();
 
         if (gameState == STATE.Game) {
-            for (int i = 0; i < handler.object.size(); i++) {    //finding out which object is the player
-                if (handler.object.get(i).getId() == ID.Player) {
-                    camera.tick(handler.object.get(i));
+            for (int i = 0; i < handler.objects.size(); i++) {    //finding out which object is the player
+                if (handler.objects.get(i).getId() == ID.Player) {
+                    camera.tick(handler.objects.get(i));
 
                 }
 
 
-                if (handler.object.get(i).getId() == ID.Door) {
-                    if (ply.getBounds().intersects(handler.object.get(i).getBounds()) && ply.inventory.contains("Door key")) {
+                if (handler.objects.get(i).getId() == ID.Door) {
+                    if (ply.getBounds().intersects(handler.objects.get(i).getBounds()) && ply.inventory.contains("Door key")) {
                         //announce the player as a winner
                         gameState = Game.STATE.Victory;
                     }
@@ -140,7 +136,7 @@ public class Game extends Canvas implements Serializable, Runnable {
 
             }
             if (ply.hp <= 0) {
-                handler.object.clear();
+                handler.objects.clear();
                 gameState = STATE.Defeat;
             }
 
@@ -153,7 +149,7 @@ public class Game extends Canvas implements Serializable, Runnable {
                 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("save.ser"));
                 out.writeObject(this.handler);
                 out.close();
-                LOGGER.info("Object has been serialized");
+                System.out.println("Object has been serialized");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -169,7 +165,7 @@ public class Game extends Canvas implements Serializable, Runnable {
                 Handler hdlr = (Handler)in.readObject();
                 this.handler = hdlr;
 
-                for(GameObject ob : handler.object) {
+                for(GameObject ob : handler.objects) {
                     if(ob.getId() == ID.Player) {
                         ply = (Wizard)ob;
                     }
@@ -190,15 +186,18 @@ public class Game extends Canvas implements Serializable, Runnable {
         }
     }
 
-
-
-           /* String inv = "Inventory: ";
-            for(int i=0; i< inventory.size(); i++) {
-                String current = inventory.get(i);
-                inv += current;
-            }
-            */
-
+    /**
+     * Preload 3 frames.
+     * Setting the graphic design of the background and rendering game objects.
+     */
+    public void render() {
+        BufferStrategy bs = this.getBufferStrategy();
+        if (bs == null) {
+            this.createBufferStrategy(3);      //preloading 3 frames
+            return;
+        }
+        bs.show();
+    }
 
     /**
      * Translate the level's image.
@@ -206,7 +205,7 @@ public class Game extends Canvas implements Serializable, Runnable {
      *
      * @param image
      */
-    public void loadLevel(BufferedImage image) {
+    protected void loadLevel(BufferedImage image) {
         int w = image.getWidth();
         int h = image.getHeight();
 
@@ -217,8 +216,7 @@ public class Game extends Canvas implements Serializable, Runnable {
                 int green = (pixel >> 8) & 0xff;
                 int blue = (pixel) & 0xff;
 
-                if (blue == 255 && green == 38)
-                    handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
+                if (blue == 255 && green == 38) handler.addObject(new Block(xx * 32, yy * 32, ID.Block));
 
                 if (green == 255 && blue == 33) {
                     ply = new Wizard(xx * 32, yy * 32, ID.Player, handler, this);
@@ -241,8 +239,9 @@ public class Game extends Canvas implements Serializable, Runnable {
      *
      * @param args
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new Game();
+
     }
 
 }

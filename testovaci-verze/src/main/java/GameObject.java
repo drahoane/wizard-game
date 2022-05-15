@@ -1,8 +1,11 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.Serializable;
 
-public abstract class GameObject {
+public abstract class GameObject implements Serializable {
 
-    protected int x, y;
+    protected int x, y, sheetX, sheetY, sheetSizeX, sheetSizeY;
     protected float speedX = 0, speedY = 0;     //speed of object
     protected ID id;
 

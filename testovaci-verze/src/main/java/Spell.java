@@ -1,11 +1,11 @@
 import java.awt.*;
 import java.util.logging.Logger;
 
-public class Spell extends GameObject{
+public class Spell extends GameObject {
     private static final Logger LOGGER = Logger.getLogger(Spell.class.getName() );
 
 
-    private Handler handler;
+    private final Handler handler;
 
     public Spell(int x, int y, ID id, Handler handler, int mx, int my) {
         super(x, y, id);
@@ -28,8 +28,8 @@ public class Spell extends GameObject{
             handler.removeObject(this);
         }
 
-        for(int i = 0; i < handler.object.size(); i++) {
-            GameObject tempObject = handler.object.get(i);
+        for(int i = 0; i < handler.objects.size(); i++) {
+            GameObject tempObject = handler.objects.get(i);
 
             if (tempObject.getId() == ID.Block) {
                 if (getBounds().intersects(tempObject.getBounds())) {
@@ -38,7 +38,8 @@ public class Spell extends GameObject{
             }
         }
     }
-    
+
+
 
     @Override
     public Rectangle getBounds() {

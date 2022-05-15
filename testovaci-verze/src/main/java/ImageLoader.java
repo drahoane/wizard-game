@@ -1,9 +1,8 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.Serializable;
 
-public class ImageLoader implements Serializable  {
+public class ImageLoader {
     private BufferedImage image;
 
     /**
