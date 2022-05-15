@@ -1,11 +1,9 @@
 import java.awt.*;
-import java.util.logging.Logger;
 
 public class Spell extends GameObject {
-    private static final Logger LOGGER = Logger.getLogger(Spell.class.getName() );
-
 
     private final Handler handler;
+
 
     public Spell(int x, int y, ID id, Handler handler, Sheet sh, int mx, int my) {
         super(x, y, id, sh);
@@ -17,7 +15,7 @@ public class Spell extends GameObject {
 
     /**
      * Within time update the object's directions.
-     * If the 'spell' object collides with 'block' object, remove the spell.
+     * If the 'spell' object collides with 'block' object or has no speed, remove the spell.
      */
     @Override
     public void tick() {

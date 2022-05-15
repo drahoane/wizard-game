@@ -11,7 +11,6 @@ public class Handler implements Serializable {
     public void tick() {
         for (int i = 0; i < objects.size(); i++) {
             GameObject tempObject = objects.get(i);
-
             tempObject.tick();
         }
     }
@@ -19,9 +18,7 @@ public class Handler implements Serializable {
     public void render(Graphics g) {
         for (int i = 0; i < objects.size(); i++) {
             GameObject tempObject = objects.get(i);
-
             tempObject.render(g);
-
         }
     }
 
@@ -64,7 +61,4 @@ public class Handler implements Serializable {
     public void setLeft(boolean left) {
         this.left = left;
     }
-
-
-
 }

@@ -1,27 +1,32 @@
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Enemy extends GameObject {
-    private static final Logger LOGGER = Logger.getLogger(Enemy.class.getName() );
+
+    private static final Logger LOGGER = Logger.getLogger(Enemy.class.getName());
 
     private final Handler handler;
     Random rnd = new Random();
     int choose = 0;
     int hp = 100;
 
-    //transient private final BufferedImage monImg;
 
     public Enemy(int x, int y, ID id, Handler handler, Sheet sh) {
         super(x, y, id, sh);
-        sheetX = 4; sheetY = 1; sheetSizeX = 32; sheetSizeY = 32;
+        sheetX = 4;
+        sheetY = 1;
+        sheetSizeX = 32;
+        sheetSizeY = 32;
         this.handler = handler;
-
-        //monImg = sh.grab(4, 1, 32, 32);
-
     }
 
+    /**
+     * Determine enemy's direction using random.
+     * If enemy collides with block, slow it.
+     * If enemy collides with spell, decrease its health by half, if health is equal to zero, handler will remove this object.
+     */
     @Override
     public void tick() {
         x += speedX;
@@ -49,6 +54,7 @@ public class Enemy extends GameObject {
             if(tempObject.getId() == ID.Spell) {
                 if(getBounds().intersects(tempObject.getBounds())) {
                     hp -= 50;
+                    LOGGER.log(Level.INFO,"Enemy has been hit");
                     handler.removeObject(tempObject);
                 }
             }
@@ -57,23 +63,11 @@ public class Enemy extends GameObject {
         if(hp <= 0) {
             handler.removeObject(this);
         }
-
-
-
     }
 
-
-    /*@Override
-    public void render(Graphics g) {
-        g.drawImage(monImg, x, y, null);
-    }*/
 
     @Override
     public Rectangle getBounds() {
         return new Rectangle(x, y, 32, 32);
-    }
-
-    public Rectangle getBiggerBounds() {
-        return new Rectangle(x-16, y-16, 64, 64);
     }
 }

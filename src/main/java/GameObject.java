@@ -1,12 +1,11 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.Serializable;
 
 public abstract class GameObject implements Serializable {
 
     protected int x, y, sheetX, sheetY, sheetSizeX, sheetSizeY;
-    protected float speedX = 0, speedY = 0;     //speed of object
+    protected float speedX = 0, speedY = 0;
     protected ID id;
     protected Sheet sh;
     private transient BufferedImage sprite = null;
@@ -22,11 +21,11 @@ public abstract class GameObject implements Serializable {
     public abstract void tick();
 
     /**
-     * Render object's color and it's size.
+     * Render object's image by taking only corresponding part of the game objects' layout.
      * @param g
      */
     public void render(Graphics g){
-        if(sprite == null){ //1. render nové hry nebo po načtení
+        if(sprite == null){     //first render of new game or loaded game
             sprite = sh.grab(sheetX, sheetY, sheetSizeX, sheetSizeY);
         }
         g.drawImage(sprite, x, y, null);

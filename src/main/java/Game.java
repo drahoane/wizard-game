@@ -2,11 +2,12 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Game extends Canvas implements Serializable, Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(Game.class.getName() );
+    private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
     private static final long serialVersionUID = 1L;
 
@@ -15,9 +16,7 @@ public class Game extends Canvas implements Serializable, Runnable {
     private Handler handler;
     transient private final Camera camera;
     private final Sheet sh;
-
     public Wizard ply;
-
 
     transient private final BufferedImage level;
     transient private final BufferedImage sheet;
@@ -37,10 +36,10 @@ public class Game extends Canvas implements Serializable, Runnable {
     public STATE gameState = STATE.Menu;
 
     /**
-     * Create a window of the game including the game handler.
-     * Set camera focus on the player.
+     * Create a window of the game including new game handler and camera.
      * Add key and mouse listener for player's input.
-     * Load the image of a level from resources.
+     * Load the image of level and image of all game objects from declared resources.
+     * Get only image of floor using method 'grab'.
      */
     public Game() {
         new Window(1000, 563, "Enchanted", this);
@@ -85,7 +84,6 @@ public class Game extends Canvas implements Serializable, Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -123,6 +121,9 @@ public class Game extends Canvas implements Serializable, Runnable {
     /**
      * Supporting method for updating the game.
      * Find out which game object is the player and update on it the focus of the camera.
+     * If wizard collides with the door and already has a 'door key' in inventory, change the game state to victory.
+     * If wizard has zero health, remove objects from game handler and change the game state to defeat.
+     * If player wants to save/load game, try to serialize/deserialize the game handler.
      */
     public void tick() {    //updating game
         handler.tick();
@@ -131,9 +132,7 @@ public class Game extends Canvas implements Serializable, Runnable {
             for (int i = 0; i < handler.objects.size(); i++) {    //finding out which object is the player
                 if (handler.objects.get(i).getId() == ID.Player) {
                     camera.tick(handler.objects.get(i));
-
                 }
-
 
                 if (handler.objects.get(i).getId() == ID.Door) {
                     if (ply.getBounds().intersects(handler.objects.get(i).getBounds()) && ply.inventory.contains("Door key")) {
@@ -141,24 +140,22 @@ public class Game extends Canvas implements Serializable, Runnable {
                         gameState = Game.STATE.Victory;
                     }
                 }
-
             }
+
             if (ply.hp <= 0) {
                 handler.objects.clear();
                 gameState = STATE.Defeat;
             }
-
-
         }
-
 
         if (gameState == STATE.Save) {
             try {
                 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("save.ser"));
                 out.writeObject(this.handler);
                 out.close();
-                System.out.println("Object has been serialized");
+                LOGGER.log(Level.INFO,"Objects have been successfully serialized");
             } catch (IOException ex) {
+                LOGGER.log(Level.WARNING,"Objects could not have been serialized");
                 ex.printStackTrace();
             }
             gameState = STATE.Game;
@@ -167,8 +164,6 @@ public class Game extends Canvas implements Serializable, Runnable {
         // Deserialization
         if (gameState == STATE.Load) {
             try {
-                //BufferedImage wizImg = sh.grab(1, 1, 32, 48);
-
                 ObjectInputStream in = new ObjectInputStream(new FileInputStream("save.ser"));
                 Handler hdlr = (Handler)in.readObject();
                 this.handler = hdlr;
@@ -176,19 +171,19 @@ public class Game extends Canvas implements Serializable, Runnable {
                 for(GameObject ob : handler.objects) {
                     if(ob.getId() == ID.Player) {
                         ply = (Wizard)ob;
+                        LOGGER.log(Level.INFO,"Game object 'wizard' has been found");
                     }
                 }
 
-                this.addKeyListener(new KeyInput(handler));     //listening for key input
+                this.addKeyListener(new KeyInput(handler));
                 this.addMouseListener(new MouseInput(handler, camera, this, sh));
-
 
                 gameState = STATE.Game;
 
-                System.out.println("Object has been deserialized");
+                LOGGER.log(Level.INFO,"Objects have been successfully deserialized");
 
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("file not found");
+                LOGGER.log(Level.WARNING,"Desired file has not been found");
                 System.exit(0);
             }
         }
@@ -197,6 +192,7 @@ public class Game extends Canvas implements Serializable, Runnable {
     /**
      * Preload 3 frames.
      * Setting the graphic design of the background and rendering game objects.
+     * Rendering health bar, amount of mana and player's inventory.
      */
     public void render() {
         BufferStrategy bs = this.getBufferStrategy();
@@ -287,7 +283,7 @@ public class Game extends Canvas implements Serializable, Runnable {
 
     /**
      * Translate the level's image.
-     * Determine which game object is the player and simple block using RGB.
+     * Determine which game object is which by using RGB.
      *
      * @param image
      */
@@ -314,22 +310,14 @@ public class Game extends Canvas implements Serializable, Runnable {
                 if (green == 255 && blue == 255) handler.addObject(new Chest(xx * 32, yy * 32, ID.Chest, sh));
 
                 if (red == 255 && blue == 255) handler.addObject(new Door(xx * 32, yy * 32, ID.Door, sh));
-
             }
         }
     }
 
 
-    /**
-     * Initialize the game.
-     *
-     * @param args
-     */
     public static void main(String[] args) {
         new Game();
-
     }
-
 }
 
 

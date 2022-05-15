@@ -8,8 +8,9 @@ public class Camera {
     }
 
     /**
-     * Update object's directions and change the variables types to float.
+     * Update object's (player's) directions and change the variables types to float.
      * Set the boundaries of the directions x and y so that the camera's focus won't leave the level's rendered image.
+     *
      * @param object
      */
     public void tick(GameObject object) {
@@ -26,15 +27,7 @@ public class Camera {
         return x;
     }
 
-    public void setX(float x) {
-        this.x = x;
-    }
-
     public float getY() {
         return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
     }
 }

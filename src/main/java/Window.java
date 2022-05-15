@@ -2,14 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-
 
 public class Window  {
 
     /**
-     * Create a window of the game.
+     * Create a window of the game including buttons for starting a new game or loading saved game.
      * Window cannot be resizable, on exit the window closes, window will appear in the center of the screen.
+     *
      * @param width
      * @param height
      * @param title
@@ -22,15 +21,10 @@ public class Window  {
         frame.setMaximumSize(new Dimension(width, height));
         frame.setMinimumSize(new Dimension(width, height));
 
-
         JButton btnNewGame = new JButton("New game");
         btnNewGame.setBounds(390, 200, 200, 64);
         JButton btnLoadGame = new JButton("Load game");
         btnLoadGame.setBounds(390, 300, 200, 64);
-
-        JButton btnPlayAgain = new JButton("Play again");
-        btnLoadGame.setBounds(390, 300, 200, 64);
-
 
 
         ActionListener al = new ActionListener() {
@@ -61,7 +55,6 @@ public class Window  {
 
         frame.add(btnNewGame);
         frame.add(btnLoadGame);
-        frame.add(btnPlayAgain);
 
         frame.add(game);
 

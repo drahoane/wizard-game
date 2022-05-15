@@ -1,7 +1,12 @@
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MouseInput extends MouseAdapter {
+
+    private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
+
     private final Handler handler;
     private final Camera camera;
     private final Game game;
@@ -18,7 +23,8 @@ public class MouseInput extends MouseAdapter {
     /**
      * Based on camera's focus and the directions of the mouse calculate spell's trace.
      * Iterate through game objects.
-     * If the game object is a player, render spell's graphics coming from this object - player.
+     * If the game object is a wizard, render spell's graphics coming from this object.
+     * If the mouse is pressed while being on certain coordinates of the screen, manage this action by changing game state for invoking further operations.
      * @param e
      */
     public void mousePressed(MouseEvent e) {
@@ -40,19 +46,30 @@ public class MouseInput extends MouseAdapter {
 
         if(game.gameState == Game.STATE.Game) {
             if (mouseOver(ax, ay, 675, 162, 875, 182)) {        //serialize
-                System.out.println("Saving....");
+                LOGGER.log(Level.INFO,"Saving....");
                 game.gameState = Game.STATE.Save;
             }
         }
 
         if(game.gameState == Game.STATE.Defeat || game.gameState == Game.STATE.Victory) {
             if (mouseOver(ax, ay, 665, 455, 865, 520)) {        //exit
-                System.out.println("Terminating....");
+                LOGGER.log(Level.INFO,"Terminating....");
                 System.exit(0);
             }
         }
     }
 
+    /**
+     * Return boolean depending on if the mouse was pressed while being within a certain rectangle.
+     *
+     * @param ax
+     * @param ay
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @return
+     */
     private boolean mouseOver(int ax, int ay, int x, int y, int width, int height) {
         return ax > x && ax < width && ay > y && ay < height;
     }
