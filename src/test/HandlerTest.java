@@ -1,4 +1,3 @@
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,12 +10,11 @@ public class HandlerTest {
     Wizard wizard;
     Chest chest;
     Handler handler;
-    Game game;
-
+    Sheet sh;
 
     @BeforeEach
     public void setup() {
-        wizard = new Wizard(64 * 32, 64 * 32, ID.Player, handler, new Game());
+        wizard = new Wizard(64 * 32, 64 * 32, ID.Player, handler, new Game(), sh);
     }
 
     @Test
@@ -35,7 +33,7 @@ public class HandlerTest {
         Handler mockHandler = mock(Handler.class);
         g.loadLevel(level);
         for (int i = 0; i < 9; i++) {
-            mockHandler.addObject(chest = new Chest(64 * 32, 64 * 32, ID.Chest));
+            mockHandler.addObject(chest = new Chest(64 * 32, 64 * 32, ID.Chest, sh));
         }
 
         verify(mockHandler, times(9)).addObject(any(Chest.class));
