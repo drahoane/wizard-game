@@ -11,8 +11,6 @@ public class Sheet implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
 
     transient private BufferedImage image;
-    private String pathToImage = "src/main/resources/all.png";
-
 
     public Sheet(BufferedImage image) {
         this.image = null;
@@ -28,15 +26,10 @@ public class Sheet implements Serializable {
      * @return
      */
     public BufferedImage grab(int col, int row, int width, int height) {
+        ImageLoader loader = new ImageLoader();
         if(image == null){
-            try{
-                image = ImageIO.read(new File(this.pathToImage));
-                LOGGER.log(Level.INFO,"Image has been successfully read");
-            }catch(IOException e){
-                LOGGER.log(Level.WARNING,"Could not read image");
-                System.out.println(e);
-                return null;
-            }
+            image = loader.loadImage("all.png");
+            LOGGER.log(Level.INFO,"Image has been successfully read");
         }
         return image.getSubimage((col*32)-32, (row*32)-32, width, height);
     }
