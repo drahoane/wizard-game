@@ -22,16 +22,17 @@ public class Spell extends GameObject {
         x += speedX;
         y += speedY;
 
-        if(speedX == 0 || speedY == 0) {
-            handler.removeObject(this);
-        }
 
         for(int i = 0; i < handler.objects.size(); i++) {
             GameObject tempObject = handler.objects.get(i);
 
+            if(speedX == 0 || speedY == 0) {
+                handler.objectsToBeRemoved.add(this);
+            }
+
             if (tempObject.getId() == ID.Block) {
                 if (getBounds().intersects(tempObject.getBounds())) {
-                    handler.removeObject(this);
+                    handler.objectsToBeRemoved.add(this);
                 }
             }
         }

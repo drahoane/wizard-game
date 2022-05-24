@@ -129,24 +129,14 @@ public class Game extends Canvas implements Serializable, Runnable {
         handler.tick();
 
         if (gameState == STATE.Game) {
-            for (int i = 0; i < handler.objects.size(); i++) {    //finding out which object is the player
-                if (handler.objects.get(i).getId() == ID.Player) {
-                    camera.tick(handler.objects.get(i));
-                }
-
-                if (handler.objects.get(i).getId() == ID.Door) {
-                    if (ply.getBounds().intersects(handler.objects.get(i).getBounds()) && ply.inventory.contains("Door key")) {
-                        //announce the player as a winner
-                        gameState = Game.STATE.Victory;
-                    }
-                }
-            }
+            camera.tick(ply);
 
             if (ply.hp <= 0) {
-                handler.objects.clear();
                 gameState = STATE.Defeat;
             }
         }
+
+
 
         if (gameState == STATE.Save) {
             try {
@@ -287,7 +277,7 @@ public class Game extends Canvas implements Serializable, Runnable {
      *
      * @param image
      */
-    private void loadLevel(BufferedImage image) {
+    protected void loadLevel(BufferedImage image) {
         int w = image.getWidth();
         int h = image.getHeight();
 
@@ -307,7 +297,7 @@ public class Game extends Canvas implements Serializable, Runnable {
 
                 if (red == 255) handler.addObject(new Enemy(xx * 32, yy * 32, ID.Enemy, handler, sh));
 
-                if (green == 255 && blue == 255) handler.addObject(new Chest(xx * 32, yy * 32, ID.Chest, sh));
+                if (green == 255 && blue == 255) handler.addObject(new Chest(xx * 32, yy * 32, ID.Chest, handler, this, sh));
 
                 if (red == 255 && blue == 255) handler.addObject(new Door(xx * 32, yy * 32, ID.Door, sh));
             }

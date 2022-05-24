@@ -49,6 +49,7 @@ public class Wizard extends GameObject {
         if(handler.isLeft()) speedX = -5;
         else if(!handler.isRight()) speedX = 0;
 
+
     }
 
     /**
@@ -69,27 +70,22 @@ public class Wizard extends GameObject {
                 }
             }
 
-            if (tempObject.getId() == ID.Chest) {
-                if (getBounds().intersects(tempObject.getBounds())) {
-                    if (chestsLeft == 1) {
-                        inventory.add("Door key");
-                        LOGGER.log(Level.INFO,"Door key has been added to the inventory");
-                    }
-                    mana += 10;
-                    handler.removeObject(tempObject);
-                    chestsLeft -= 1;
-                    LOGGER.log(Level.INFO,chestsLeft + " chests left to loot");
-                }
-            }
 
             if (tempObject.getId() == ID.Enemy) {
                 if (getBounds().intersects(tempObject.getBounds())) {
                     hp -= 1;
 
                     if (hp == 0) {
-                        handler.removeObject(this);
+                        handler.objectsToBeRemoved.add(this);
 
                     }
+                }
+            }
+
+            if (handler.objects.get(i).getId() == ID.Door) {
+                if (getBounds().intersects(handler.objects.get(i).getBounds()) && inventory.contains("Door key")) {
+                    //announce the player as a winner
+                    game.gameState = Game.STATE.Victory;
                 }
             }
         }

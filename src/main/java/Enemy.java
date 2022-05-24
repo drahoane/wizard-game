@@ -39,15 +39,15 @@ public class Enemy extends GameObject {
 
             if (tempObject.getId() == ID.Block) {
                 if (getBounds().intersects(tempObject.getBounds())) {
-                    x += (speedX*5) * -1;
-                    y += (speedY*5) * -1;
+                    x += (speedX) * -1;
+                    y += (speedY) * -1;
 
                     speedX *= -1;
                     speedY *= -1;
 
                 } else if (choose == 0) {
-                        speedX = (rnd.nextInt(4 - -4) + -4);
-                        speedY = (rnd.nextInt(4 - -4) + -4);
+                    speedX = (rnd.nextInt(4 - -4) + -4);
+                    speedY = (rnd.nextInt(4 - -4) + -4);
                 }
             }
 
@@ -55,13 +55,13 @@ public class Enemy extends GameObject {
                 if(getBounds().intersects(tempObject.getBounds())) {
                     hp -= 50;
                     LOGGER.log(Level.INFO,"Enemy has been hit");
-                    handler.removeObject(tempObject);
+                    handler.objectsToBeRemoved.add(this);
                 }
             }
         }
 
         if(hp <= 0) {
-            handler.removeObject(this);
+            handler.objectsToBeRemoved.add(this);
         }
     }
 

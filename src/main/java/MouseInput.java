@@ -31,18 +31,20 @@ public class MouseInput extends MouseAdapter {
         int mx = (int) (e.getX() + camera.getX());
         int my = (int) (e.getY() + camera.getY());
 
+
+        int ax = e.getX();
+        int ay = e.getY();
+
+
         for(int i = 0; i < handler.objects.size(); i++) {
             GameObject tempObject = handler.objects.get(i);
 
-            if(tempObject.getId() == ID.Player && game.ply.mana >= 1) {     //cannot shoot the spell without mana
+            if(tempObject.getId() == ID.Player && game.ply.mana >= 1 && !mouseOver(ax, ay, 400, 5, 600, 25)) {     //cannot shoot the spell without mana
                 handler.addObject(new Spell(tempObject.getX() +16, tempObject.getY() +24, ID.Spell, handler, sh, mx, my));    //+16 and +24 -> spell goes from the middle of the player object
                 game.ply.mana--;
             }
         }
 
-
-        int ax = e.getX();
-        int ay = e.getY();
 
 
         if(game.gameState == Game.STATE.Game) {
