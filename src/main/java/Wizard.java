@@ -71,7 +71,7 @@ public class Wizard extends GameObject {
             }
 
 
-            if (tempObject.getId() == ID.Enemy) {
+            if (tempObject.getId() == ID.Enemy && game.gameState == Game.STATE.Game)  {
                 if (getBounds().intersects(tempObject.getBounds())) {
                     hp -= 1;
 
