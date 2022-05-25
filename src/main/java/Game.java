@@ -126,9 +126,8 @@ public class Game extends Canvas implements Serializable, Runnable {
      * If player wants to save/load game, try to serialize/deserialize the game handler.
      */
     public void tick() {    //updating game
-        handler.tick();
-
         if (gameState == STATE.Game) {
+            handler.tick();
             camera.tick(ply);
 
             if (ply.hp <= 0) {
